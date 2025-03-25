@@ -10,3 +10,11 @@ Combines with "data/shrinemedicationlist.csv" (list of medication used to treat/
 Unites groups of columns (e.g. ICD 9, ICD 10, non-cancer illness codes) into singular variables containing all codes as a string comma separated.
 
 ## data_wrangling.R
+
+Takes data from load_data.R. Adds in some variable names to aid readability.
+
+Manipulation of variables including creating variables for specific diseases (from various fields including non-cancer illness codes, ICD, medication etc.), defining shift work exposures and calculating pack years.
+
+## CharacteristicTables.R
+
+Creates social-demographic characteristic table (Table 1) and health characteristic table (Table 2) of key variables.
