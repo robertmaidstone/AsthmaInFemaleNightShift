@@ -208,7 +208,7 @@ se_seq<-function(start,end){
 }
 
 freq_seq<-function(year_vec,freq){
-  if(is.na(year_vec)){
+  if(any(is.na(year_vec))){
     out<-NA
   } else{
     out<-paste(rep(freq,length(year_vec)),sep=",")
