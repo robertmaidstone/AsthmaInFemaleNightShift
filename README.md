@@ -18,3 +18,7 @@ Manipulation of variables including creating variables for specific diseases (fr
 ## CharacteristicTables.R
 
 Creates social-demographic characteristic table (Table 1) and health characteristic table (Table 2) of key variables.
+
+## OR_asthmashiftsex
+
+Figure 1 (maybe 2 in medRxiv/CHEST versions) plus p-values
