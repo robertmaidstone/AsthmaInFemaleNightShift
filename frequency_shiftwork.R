@@ -333,3 +333,23 @@ save(pval.freqNSW,tab7asthmadefms.freqNSW,tab6asthmadef.freqNSW,
 
 ###########################
 
+
+model_vec<-c("freq.MNSorNS.group  + Year_of_birth",
+             "freq.MNSorNS.group  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o",
+             "freq.MNSorNS.group  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o + Smoking_n + Packyears_nn + BMI_o + SleepDur")
+model_names <- c("Model 1: Age adjusted.",
+                 #"Model 2: Adjusted by age, smoking status, pack years, alcohol status, daily alcohol intake, ethnicity, TDI, days exercised (walked, moderate, vigorous), chronotype, length of working week, job asthma risk, job medical required.",
+                 "Model 2: Adjusted by multivariate covariates.",
+                 "Model 3: Model 2 covariates + mediators")
+
+model_data  %>%
+  filter(!is.na(JiNS)) %>%
+  filter(!is.na(Sex)) %>%
+  filter(!is.na(Packyears_nn)) %>%
+  filter((Asthma_med_all == FALSE&Asthma2==FALSE) | (Asthma_def_ms==TRUE)) %>%
+  filter(num_yij!=0) %>%
+  as_tibble -> model_data_temp
+DependentVar <- "Asthma_def_ms"
+
+ORmodelrun.freqNSW(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]] -> msfreq_women
+ORmodelrun.freqNSW(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]] -> msfreq_men
