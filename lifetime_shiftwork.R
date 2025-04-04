@@ -1,5 +1,4 @@
 source("load_data.R")
-library(lubridate)
 
 # ORmodelrun function -----------------------------------------------------
 
@@ -11,18 +10,13 @@ round_df <- function(df, digits) {
   (df)
 }
 
-tf<-function(table_input){
-  table_input %>% mutate(samplesize=`FALSE`+`TRUE`,trueprop=round(`TRUE`/samplesize*100,2)) %>% 
-    dplyr::select(freq.MNSorNS.group,`TRUE`,trueprop,samplesize,everything()) %>% dplyr::select(-`FALSE`) %>% t
-}
-
-ORmodelrun.freqNSW<-function(model_data,DependentVar,model_vec,model_names){
+ORmodelrun.sumNSW<-function(model_data,DependentVar,model_vec,model_names){
   model_vec<-paste(DependentVar,"~",model_vec)
   
   model_data %>%
-    dplyr::select(DependentVar,freq.MNSorNS.group) %>% table(useNA = "always") %>%
+    dplyr::select(DependentVar,sum.MNSorNS.group) %>% table(useNA = "always") %>%
     as.data.frame() -> tab_1
-  eval(parse(text=paste0("tab_1 %>% filter(!is.na(",DependentVar,"),!is.na(freq.MNSorNS.group)) -> tab_1")))
+  eval(parse(text=paste0("tab_1 %>% filter(!is.na(",DependentVar,"),!is.na(sum.MNSorNS.group)) -> tab_1")))
   tab_1 %>%
     spread(DependentVar,Freq)  -> tab_1
   
@@ -32,7 +26,7 @@ ORmodelrun.freqNSW<-function(model_data,DependentVar,model_vec,model_names){
     model_name_i <- model_names[i]
     
     model_data %>%
-      filter(!is.na(freq.MNSorNS.group)) %>%
+      filter(!is.na(sum.MNSorNS.group)) %>%
       filter(!is.na(DependentVar)) %>%
       glm(data = .,modeli,family = binomial(link="logit")) -> mod3
     
@@ -44,22 +38,22 @@ ORmodelrun.freqNSW<-function(model_data,DependentVar,model_vec,model_names){
       mutate(OR=paste0(V1," (",`2.5 %`,"-",`97.5 %`,")")) -> kk_temp
     eval(parse(text=paste0("kk_temp %>% dplyr::select(row,\"",model_name_i,"\"=OR)-> kk_temp")))
     kk_temp %>%
-      mutate(row=(strsplit(row,split = "freq.MNSorNS.group") %>% unlist %>% .[(1:3)*2])) -> kk_temp
+      mutate(row=(strsplit(row,split = "sum.MNSorNS.group") %>% unlist %>% .[(1:3)*2])) -> kk_temp
     
-    tab_1<-merge(tab_1,kk_temp,by.x="freq.MNSorNS.group",by.y="row",all = T)
+    tab_1<-merge(tab_1,kk_temp,by.x="sum.MNSorNS.group",by.y="row",all = T)
   }
   return(list(tab_1,model_list))
 }
 
-trend.freqNSW<-function(model_data,DependentVar,model_vec,model_names){
+trend.sumNSW<-function(model_data,DependentVar,model_vec,model_names){
   model_vec<-paste(DependentVar,"~",model_vec)
   
-  str_replace(model_vec,"freq.MNSorNS.group","mean_freq_MNSorNS") -> model_vec
+  str_replace(model_vec,"sum.MNSorNS.group","num_yiMNSorNSj") -> model_vec
   
   model_data %>%
-    dplyr::select(DependentVar,freq.MNSorNS.group) %>% table(useNA = "always") %>%
+    dplyr::select(DependentVar,sum.MNSorNS.group) %>% table(useNA = "always") %>%
     as.data.frame() -> tab_1
-  eval(parse(text=paste0("tab_1 %>% filter(!is.na(",DependentVar,"),!is.na(freq.MNSorNS.group)) -> tab_1")))
+  eval(parse(text=paste0("tab_1 %>% filter(!is.na(",DependentVar,"),!is.na(sum.MNSorNS.group)) -> tab_1")))
   tab_1 %>%
     spread(DependentVar,Freq)  -> tab_1
   
@@ -70,7 +64,7 @@ trend.freqNSW<-function(model_data,DependentVar,model_vec,model_names){
     model_name_i <- model_names[i]
     
     model_data %>%
-      filter(!is.na(freq.MNSorNS.group)) %>%
+      filter(!is.na(sum.MNSorNS.group)) %>%
       filter(!is.na(DependentVar)) %>%
       glm(data = .,modeli,family = binomial(link="logit")) -> mod3
     
@@ -212,15 +206,6 @@ se_seq<-function(start,end){
   return(out)
 }
 
-freq_seq<-function(year_vec,freq){
-  if(any(is.na(year_vec))){
-    out<-NA
-  } else{
-    out<-paste(rep(freq,length(year_vec)),sep=",")
-  }
-  return(out)
-}
-
 for(i in 0:39){
   eval(parse(text=paste0("model_data %>% mutate(yij.",i,"= map2(X22602.0.",i,",X22603.0.",i,",se_seq)) -> model_data")))
 } 
@@ -231,57 +216,20 @@ for(i in 0:39){
   eval(parse(text=paste0("model_data %>% mutate(yimnsj.",i,"= ifelse(X22640.0.",i,"%in%c(0,1),map2(X22602.0.",i,",X22603.0.",i,",se_seq),NA)) -> model_data")))
 } 
 
-###eerere
-for(i in 0:19){
-  eval(parse(text=paste0("model_data %>% mutate(freq_mns.",i,"= map2(yimnsj.",i,",X22643.0.",i,",freq_seq)) -> model_data")))
-} 
-model_data %>% mutate(freq_mns_all=NA) -> model_data
-for(i in 0:19){
-  eval(parse(text=paste0("model_data %>% mutate(freq_mns_all=map2(freq_mns_all,freq_mns.",i,",c)) -> model_data")))
-} 
-for(i in 0:32){
-  eval(parse(text=paste0("model_data %>% mutate(freq_ns.",i,"= map2(yinsj.",i,",X22653.0.",i,",freq_seq)) -> model_data")))
-} 
-model_data %>% mutate(freq_ns_all=NA) -> model_data
-for(i in 0:32){
-  eval(parse(text=paste0("model_data %>% mutate(freq_ns_all=map2(freq_ns_all,freq_ns.",i,",c)) -> model_data")))
-} 
-#####
-
 model_data %>% mutate(yij_all=NA) -> model_data
 for(i in 0:39){
-  eval(parse(text=paste0("model_data %>% mutate(yij_all= map2(yij_all,yij.",i,",c)) -> model_data")))
+  eval(parse(text=paste0("model_data %>% mutate(yij_all= map2(yij.",i,",yij_all,c)) -> model_data")))
 } 
 model_data %>% mutate(yinsj_all=NA) -> model_data
 for(i in 0:39){
-  eval(parse(text=paste0("model_data %>% mutate(yinsj_all= map2(yinsj_all,yinsj.",i,",c)) -> model_data")))
+  eval(parse(text=paste0("model_data %>% mutate(yinsj_all= map2(yinsj.",i,",yinsj_all,c)) -> model_data")))
 } 
 model_data %>% mutate(yimnsj_all=NA) -> model_data
 for(i in 0:39){
-  eval(parse(text=paste0("model_data %>% mutate(yimnsj_all= map2(yimnsj_all,yimnsj.",i,",c)) -> model_data")))
+  eval(parse(text=paste0("model_data %>% mutate(yimnsj_all= map2(yimnsj.",i,",yimnsj_all,c)) -> model_data")))
 } 
 
-m.frq <- function(y,freq){
-  data.frame(
-    y=y[!is.na(y)],
-    f=as.numeric(freq[!is.na(freq)])) %>%
-    group_by(y) %>%
-    mutate(fm=mean(f)) %>%
-    ungroup %>%
-    dplyr::select(fm) %>%unlist %>% mean
-}
-
-model_data %>% mutate(mean_freq_mns=map2(yimnsj_all,freq_mns_all,m.frq)) -> model_data
-model_data %>% mutate(mean_freq_ns=map2(yinsj_all,freq_ns_all,m.frq)) -> model_data
-
-model_data %>% mutate(temp1=is.nan(unlist(mean_freq_mns))) %>%
-  mutate(temp2=is.nan(unlist(mean_freq_ns))) %>%
-  dplyr::select(temp1,temp2) %>% table
-
 model_data %>% mutate(yiMNSorNSj_all= map2(yinsj_all,yimnsj_all,c)) -> model_data
-model_data %>% mutate(freq_MNSorNSj_all= map2(freq_ns_all,freq_mns_all,c)) -> model_data
-model_data %>% mutate(mean_freq_MNSorNS=map2(yiMNSorNSj_all,freq_MNSorNSj_all,m.frq)) -> model_data
-
 
 uni_num_2008 <- function(x){
   x %>% unique %>% as.numeric() %>% .[.<=2008] %>% length %>% .[] -1 -> x_out
@@ -290,71 +238,45 @@ uni_num_2008 <- function(x){
 
 model_data %>% 
   mutate(num_yij=map(yij_all,uni_num_2008)) %>%
+  #mutate(num_yij=unlist(map(yij_all_u,length))-1) %>% 
   mutate(num_yinsj=map(yinsj_all,uni_num_2008)) %>%
+  #mutate(num_yinsj=unlist(map(yinsj_all_u,length))-1) %>%
   mutate(num_yimnsj=map(yimnsj_all,uni_num_2008)) %>%
+  #mutate(num_yimnsj=unlist(map(yimnsj_all_u,length))-1) %>%
   mutate(num_yiMNSorNSj=map(yiMNSorNSj_all,uni_num_2008)) %>%
+  #mutate(num_yiMNSorNSj=unlist(map(yiMNSorNSj_all_u,length))-1) %>%
   mutate(sum.MNSorNS.group = ifelse(num_yiMNSorNSj==0,"none",
                                     ifelse(num_yiMNSorNSj<5,"lessthan5",
                                            ifelse(num_yiMNSorNSj<10,"gt5lt10","greaterthan10")))) %>%
-  mutate(sum.MNSorNS.group=factor(sum.MNSorNS.group,levels=c("none","lessthan5","gt5lt10","greaterthan10"))) %>%
- mutate(mean_freq_MNSorNS=unlist(mean_freq_MNSorNS)) %>%
-  mutate(freq.MNSorNS.group = ifelse(is.nan(mean_freq_MNSorNS),"none",
-                                     ifelse(mean_freq_MNSorNS<5,"lessthan5",
-                                            ifelse(mean_freq_MNSorNS<10,"gt5lt10","greaterthan10")))) %>%
-  mutate(freq.MNSorNS.group=factor(freq.MNSorNS.group,levels=c("none","lessthan5","gt5lt10","greaterthan10")))    -> model_data
+  mutate(sum.MNSorNS.group=factor(sum.MNSorNS.group,levels=c("none","lessthan5","gt5lt10","greaterthan10")))    -> model_data
 
-model_data$freq.MNSorNS.group %>% table(useNA = "always")
-model_data$sum.MNSorNS.group %>% table(useNA = "always")
-
-
-save(model_data,file="data/frequency_data.RData")
+save(model_data,file="data/lifetime_data.RData")
 
 ###########################
 
-model_vec<-c("freq.MNSorNS.group + Sex + Year_of_birth",
-             "freq.MNSorNS.group + Sex + Year_of_birth + Smoking_n + Alcohol + Ethnicity + TDI + DaysWalked + DaysModerate + DaysVigorous + BMI + Packyears_nn + Alcintake + Chronotype + LengthofWW + Job_AsthmaRisk + Job_MedRequired",
-             "freq.MNSorNS.group + Sex + Year_of_birth + Smoking_n + Alcohol + Ethnicity + TDI + SleepDur + DaysWalked + DaysModerate + DaysVigorous + BMI + Packyears_nn + Alcintake + Chronotype + LengthofWW + Job_AsthmaRisk + Job_MedRequired")
+model_vec<-c("sum.MNSorNS.group + Sex + Year_of_birth",
+             "sum.MNSorNS.group + Sex + Year_of_birth + Alcohol + Ethnicity + TDI + DaysWalked + DaysModerate + DaysVigorous  + Alcintake + Chronotype + LengthofWW + Job_AsthmaRisk + Job_MedRequired",
+             "sum.MNSorNS.group + Sex + Year_of_birth + Smoking_n + Alcohol + Ethnicity + TDI + SleepDur + DaysWalked + DaysModerate + DaysVigorous + BMI + Packyears_nn + Alcintake + Chronotype + LengthofWW + Job_AsthmaRisk + Job_MedRequired")
 model_names <- c("Model 1: Age and Sex adjusted OR (95% CI)",
                  #"Model 2: Multivariate adjusted OR (95% CI)",
                  "Model 2: Multivariable adjusted OR (95% CI)",
                  "Model 3: Model 2 covariates + mediators (95% CI)")
 
-
-
 model_data %>% filter((Asthma_med_all == FALSE&Asthma2==FALSE) |
-                        (Asthma_def==TRUE)) %>%filter(num_yij!=0) %>% filter(!is.na(Packyears_nn)) -> model_data_temp
+                        (Asthma_def==TRUE)) %>%filter(num_yij!=0)%>% filter(!is.na(Packyears_nn))  -> model_data_temp
 DependentVar <- "Asthma_def"
-ORmodelrun.freqNSW(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> tab6asthmadef.freqNSW
+ORmodelrun.sumNSW(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> tab6asthmadef.sumNSW
 
-model_data %>% filter((Asthma_med_all == FALSE&Asthma2==FALSE) |
-                        (Asthma_def_ms==TRUE)) %>% filter(num_yij!=0)%>% filter(!is.na(Packyears_nn)) -> model_data_temp
+model_data %>% 
+  mutate(num_yiMNSorNSj=unlist(num_yiMNSorNSj)) %>%
+  filter((Asthma_med_all == FALSE&Asthma2==FALSE) |
+                        (Asthma_def_ms==TRUE)) %>% filter(num_yij!=0)%>% filter(!is.na(Packyears_nn))  -> model_data_temp
 DependentVar <- "Asthma_def_ms"
-ORmodelrun.freqNSW(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> tab7asthmadefms.freqNSW
-trend.freqNSW(model_data_temp,DependentVar,model_vec,model_names)-> pval.freqNSW
-
-save(pval.freqNSW,tab7asthmadefms.freqNSW,tab6asthmadef.freqNSW,
-     file="data/ORtablesdata.freqNSW_newsmoking_2rev.RData")
+ORmodelrun.sumNSW(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> tab7asthmadefms.sumNSW
+trend.sumNSW(model_data_temp,DependentVar,model_vec,model_names)-> pval.sumNSW
 
 
-###########################
+save(pval.sumNSW,tab6asthmadef.sumNSW,tab7asthmadefms.sumNSW,
+     file="data/ORtablesdata.sumNSW_newsmoking.RData")
 
 
-model_vec<-c("freq.MNSorNS.group  + Year_of_birth",
-             "freq.MNSorNS.group  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o",
-             "freq.MNSorNS.group  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o + Smoking_n + Packyears_nn + BMI_o + SleepDur")
-model_names <- c("Model 1: Age adjusted.",
-                 #"Model 2: Adjusted by age, smoking status, pack years, alcohol status, daily alcohol intake, ethnicity, TDI, days exercised (walked, moderate, vigorous), chronotype, length of working week, job asthma risk, job medical required.",
-                 "Model 2: Adjusted by multivariate covariates.",
-                 "Model 3: Model 2 covariates + mediators")
-
-model_data  %>%
-  filter(!is.na(JiNS)) %>%
-  filter(!is.na(Sex)) %>%
-  filter(!is.na(Packyears_nn)) %>%
-  filter((Asthma_med_all == FALSE&Asthma2==FALSE) | (Asthma_def_ms==TRUE)) %>%
-  filter(num_yij!=0) %>%
-  as_tibble -> model_data_temp
-DependentVar <- "Asthma_def_ms"
-
-ORmodelrun.freqNSW(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]] -> msfreq_women
-ORmodelrun.freqNSW(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]] -> msfreq_men
