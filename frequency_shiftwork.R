@@ -318,7 +318,7 @@ load("data/frequency_data.RData")
 
 model_vec<-c("freq.MNSorNS.group  + Year_of_birth",
              "freq.MNSorNS.group  + Year_of_birth + Ethnicity + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW + Job_AsthmaRisk + Job_MedRequired + Chronotype",
-             "freq.MNSorNS.group  + Year_of_birth + Ethnicity + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW + Job_AsthmaRisk + Job_MedRequired + Chronotype + Smoking_n + Packyears_nn + BMI + SleepDur")
+             "freq.MNSorNS.group  + Year_of_birth + Ethnicity + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW + Job_AsthmaRisk + Job_MedRequired + Chronotype + Smoking_n + Packyears_nn + BMI + SleepDur+ Sleep_med")
 model_names <- c("Model 1: Age adjusted.",
                  #"Model 2: Adjusted by age, smoking status, pack years, alcohol status, daily alcohol intake, ethnicity, TDI, days exercised (walked, moderate, vigorous), chronotype, length of working week, job asthma risk, job medical required.",
                  "Model 2: Adjusted by multivariate covariates.",
@@ -333,5 +333,5 @@ model_data  %>%
   as_tibble -> model_data_temp
 DependentVar <- "Asthma_def_ms"
 
-ORmodelrun.freqNSW(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]] -> msfreq_women
-ORmodelrun.freqNSW(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]] -> msfreq_men
+ORmodelrun.freqNSW(model_data_temp%>% filter(gen_sex==0),DependentVar,model_vec,model_names)[[1]] -> msfreq_women
+ORmodelrun.freqNSW(model_data_temp%>% filter(gen_sex==1),DependentVar,model_vec,model_names)[[1]] -> msfreq_men
