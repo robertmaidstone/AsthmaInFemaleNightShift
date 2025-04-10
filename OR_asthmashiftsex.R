@@ -65,7 +65,7 @@ sex_plots <- function(table_all,table_men,table_women,title,model){
 
 model_vec<-c("JiNS  + Year_of_birth",
              "JiNS  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o",
-             "JiNS  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o + Smoking_n + Packyears_nn + BMI_o + SleepDur")
+             "JiNS  + Year_of_birth + Ethnicity_o + TDI + Alcohol + Alcintake + DaysWalked + DaysModerate + DaysVigorous  + LengthofWW_o + Job_AsthmaRisk + Job_MedRequired + Chronotype_o + Smoking_n + Packyears_nn + BMI_o + SleepDur + Sleep_med")
 model_names <- c("Model 1: Age adjusted.",
                  #"Model 2: Adjusted by age, smoking status, pack years, alcohol status, daily alcohol intake, ethnicity, TDI, days exercised (walked, moderate, vigorous), chronotype, length of working week, job asthma risk, job medical required.",
                  "Model 2: Adjusted by multivariate covariates.",
@@ -88,7 +88,7 @@ model_data  %>%
   as_tibble -> model_data_temp
 DependentVar <- "Asthma_def_ms"
 
-ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> tab7asthmadefms_all
+#ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> tab7asthmadefms_all
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]] -> tab7asthmadefms_women
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]] -> tab7asthmadefms_men
 
@@ -106,11 +106,11 @@ model_data  %>%
   # filter(!is.na(LengthofWW)) %>%
   # filter(!is.na(BMI)) %>%
   mutate(JiNS=JiNS_o) %>%
-  #filter((Asthma_med_all == FALSE&Asthma2==FALSE) | (Asthma_def==TRUE)) %>%
+  filter((Asthma_med_all == FALSE&Asthma2==FALSE) | (Asthma_def==TRUE)) %>%
   as_tibble -> model_data_temp
 DependentVar <- "Asthma_def"
 
-ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> asthma_all
+#ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> asthma_all
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]] -> asthma_women
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]] -> asthma_men
 
@@ -133,7 +133,7 @@ model_data  %>%
 
 DependentVar <- "X2316.0.0"
 
-ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] %>% dplyr::rename('FALSE'=`0`,'TRUE'=`1`)-> WW_all
+#ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] %>% dplyr::rename('FALSE'=`0`,'TRUE'=`1`)-> WW_all
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]]%>% dplyr::rename('FALSE'=`0`,'TRUE'=`1`) -> WW_women
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]]%>% dplyr::rename('FALSE'=`0`,'TRUE'=`1`) -> WW_men
 
@@ -156,7 +156,7 @@ model_data  %>%
 
 DependentVar <- "FEV1lt80"
 
-ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> fev_all
+#ORmodelrun_4shift(model_data_temp,DependentVar,model_vec,model_names)[[1]] -> fev_all
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==0),DependentVar,model_vec,model_names)[[1]] -> fev_women
 ORmodelrun_4shift(model_data_temp%>% filter(Sex==1),DependentVar,model_vec,model_names)[[1]] -> fev_men
 
