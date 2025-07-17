@@ -124,6 +124,7 @@ ukb_data_processed %>%
   mutate(Emp_Chron_Bronchitis=grepl(",1113",nCI_code)) %>%
   mutate(Bronchiectasis=grepl(",1114",nCI_code)) %>%
   mutate(Inter_lung_disease=grepl(",1115",nCI_code)) %>%
+  mutate(Pulmonary_Fibrosis=grepl(",1121",nCI_code)) %>%
   mutate(Other_resp_probs=grepl(",1117",nCI_code)) %>%
   mutate(GastroOesReflux=grepl(",1138",nCI_code)) %>%
   mutate(Asthma2=grepl(",1111,",nCI_code)) %>%
