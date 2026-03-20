@@ -17,6 +17,8 @@ The study findings are published in:
 asthma-shiftwork-ukb-female/
 ├── data/                     # External reference files (not included)
 ├── examples/                     # pngs for examples in README
+      ├── fig1.png
+      ├── table1.PNG              
 ├── load_data.R               # Data ingestion and merging
 ├── data_wrangling.R          # Variable derivation and cleaning
 ├── data_wrangling_operations.R          # Variable derivation and cleaning including job data
