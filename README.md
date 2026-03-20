@@ -1,41 +1,130 @@
-# AsthmaInFemaleNightShift
- Code to recreate analysis and plots/tables from paper "Increased risk of asthma in female night shift workers"
+# Asthma, Shift Work, and Genetic Sex in UK Biobank
 
-### load_data.R
+![R](https://img.shields.io/badge/R-%3E%3D4.2-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+[![DOI](https://zenodo.org/badge/DOI/10.1183/23120541.00137-2025.svg)](https://doi.org/10.1183/23120541.00137-2025)
+![Last Commit](https://img.shields.io/github/last-commit/robertmaidstone/asthma-shiftwork-ukb-female)
 
-Loads in UKB data from the RData object "data/ukb_merged.RData".
+This repository contains the full analysis pipeline for a cross-sectional UK Biobank study investigating whether genetic sex modifies the association between night shift work and asthma. The project contains end-to-end epidemiological analysis using large-scale biomedical data; including data processing, cohort construction, variable derivation, logistic regression modelling, mediation analysis, and outputting of results into publication-ready figures and tables.
 
-Combines with "data/shrinemedicationlist.csv" (list of medication used to treat/manage asthma/moderate-severe asthma, from Shrine et al., 2019) "data/occupation_asthmarisk_v2.csv" (list of occupations considered an asthma risk) and "data/sleepmedication.csv" (list of medication used to treat/manage mental health and sleep problems from He et al., 2022)
+The study findings are published in:  
+**Maidstone et al., *ERJ Open Research*, 2025.**
 
-Unites groups of columns (e.g. ICD 9, ICD 10, non-cancer illness codes) into singular variables containing all codes as a string comma separated.
+---
 
-### data_wrangling.R
+## Repository Structure
+```
+asthma-shiftwork-ukb-female/
+├── data/                     # External reference files (not included)
+├── load_data.R               # Data ingestion and merging
+├── data_wrangling.R          # Variable derivation and cleaning
+├── CharacteristicTables.R    # Table 1 and Table 2 generation
+├── OR_asthmashiftsex.R       # Main regression models and figures
+├── mediation_analysis.R      # Mediation models
+├── frequency_shiftwork.R     # Historical shift work frequency analyses
+├── lifetime_shiftwork.R      # Lifetime shift work exposure analyses
+└── README.md
+```
 
-Takes data from load_data.R. Adds in some variable names to aid readability.
 
-Manipulation of variables including creating variables for specific diseases (from various fields including non-cancer illness codes, ICD, medication etc.), defining shift work exposures and calculating pack years.
+---
 
-### CharacteristicTables.R
+## Overview of the Analysis Pipeline
 
-Creates social-demographic characteristic table (Table 1) and health characteristic table (Table 2) of key variables.
+### **1. Data Loading (`load_data.R`)**
+- Loads UK Biobank data from `data/ukb_merged.RData`.
+- Merges with:
+  - `shrinemedicationlist.csv` — asthma medication list (Shrine et al., 2019)
+  - `occupation_asthmarisk_v2.csv` — occupations with elevated asthma risk
+  - `sleepmedication.csv` — sleep/mental health medication list (He et al., 2022)
+- Collapses ICD‑9, ICD‑10, and non‑cancer illness codes into unified variables.
 
-### OR_asthmashiftsex.R
+---
 
-Figure 1 (maybe 2 in medRxiv/CHEST versions) plus p-values
+### **2. Data Wrangling (`data_wrangling.R`)**
+- Adds readable variable names.
+- Constructs disease indicators from ICD codes, medication, and self‑report.
+- Defines shift‑work exposure variables.
+- Calculates pack‑years and other covariates.
 
-### frequency_shiftwork.R
+---
 
-Frequency of shift work using historical data. Maybe going in supplemental
+### **3. Characteristic Tables (`CharacteristicTables.R`)**
+Generates:
 
-### lifetime_shiftwork.R
+- **Table 1:** Sociodemographic characteristics  
+- **Table 2:** Health characteristics  
 
-Lifetime of shift work using historical data. Maybe going in supplemental
+**📌 _Placeholder — insert example table screenshot here_**  
+*(e.g., Table 1 or Table 2 as PNG)*
 
-### mediation_analysis.R
+---
 
-Mediation analysis of additional covariates in model 3
+### **4. Main Regression Models (`OR_asthmashiftsex.R`)**
+- Logistic regression models for asthma vs. shift‑work frequency.
+- Sex‑stratified and interaction models.
+- Odds ratios and confidence intervals.
+- Generates Figure 1 (and Figure 2 in some versions).
 
-## References
+**📌 _Placeholder — insert example figure here_**  
+*(e.g., OR plot showing sex differences)*
 
-1. Shrine N., Portelli M.A., John C., et al. Moderate-To-Severe asthma in individuals of European ancestry: a genome-wide association study. Lancet Respir Med 2019;
-2. He L., Ma T., Li J., Luo Y., Zhang G., Cheng X. and Bai Y., Adherence to a healthy sleep pattern and incidence of cardiometabolic multimorbidity among hypertensive patients: a prospective study of UK Biobank. Sleep 45(10), 2022
+---
+
+### **5. Historical and Lifetime Shift Work**
+- `frequency_shiftwork.R` — historical frequency of shift work.
+- `lifetime_shiftwork.R` — lifetime exposure metrics.
+- Intended for supplementary analyses.
+
+---
+
+### **6. Mediation Analysis (`mediation_analysis.R`)**
+- Explores potential mediators in Model 3.
+- Uses established mediation frameworks in R.
+
+---
+
+## Requirements
+
+### **Software**
+- **R ≥ 4.2**
+
+### **Key Packages**
+`tidyverse`, `data.table`, `broom`, `tableone`,  
+`ggplot2`, `mediation`, `forcats`, `stringr`, etc.
+
+*(Optional: add a `sessionInfo()` block here.)*
+
+---
+
+## How to Run the Pipeline
+
+Assuming you have access to UK Biobank data and have placed the required files in `data/`:
+
+```r
+source("load_data.R")
+source("data_wrangling.R")
+source("CharacteristicTables.R")
+source("OR_asthmashiftsex.R")
+source("mediation_analysis.R")
+```
+Each script is modular and can be run independently if you only need specific outputs.
+
+## Data Access
+This project uses UK Biobank data, which cannot be shared publicly.
+To reproduce the analysis, you must have an approved UKB project and access to the relevant fields.
+The code was originally run on local UKB extracts but can be adapted for the Research Access Platform (RAP) with minor path adjustments.
+
+## Citation
+If using this code please cite the published paper. Published paper also contains full methodological details, results, and interpretation.
+Maidstone R., et al. Increased risk of asthma in female night shift workers.
+ERJ Open Research, 2025.
+(Add DOI link here once available.)
+
+## Contributing
+Contributions, suggestions, and extensions are welcome.
+Please open an issue or submit a pull request.
+
+ ## References
+- Shrine N., Portelli M.A., John C., et al. Moderate-To-Severe asthma in individuals of European ancestry: a genome-wide association study. Lancet Respir Med, 2019.
+- He L., Ma T., Li J., Luo Y., Zhang G., Cheng X., Bai Y. Adherence to a healthy sleep pattern and incidence of cardiometabolic multimorbidity among hypertensive patients: a prospective study of UK Biobank. Sleep 45(10), 2022.
