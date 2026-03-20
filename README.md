@@ -8,7 +8,7 @@
 This repository contains the full analysis pipeline for a cross-sectional UK Biobank study investigating whether genetic sex modifies the association between night shift work and asthma. The project contains end-to-end epidemiological analysis using large-scale biomedical data; including data processing, cohort construction, variable derivation, logistic regression modelling, mediation analysis, and outputting of results into publication-ready figures and tables.
 
 The study findings are published in:  
-**Maidstone et al., *ERJ Open Research*, 2025.**
+**Maidstone et al., *ERJ Open Research*, 2025.** ([link](https://doi.org/10.1183/23120541.00137-2025))
 
 ---
 
@@ -97,7 +97,9 @@ Generates:
 
 ---
 
-## How to Run the Pipeline
+## Running the Pipeline
+
+**Data access:** This project uses UK Biobank data, which cannot be shared publicly. To reproduce the analysis, you must have an approved UKB project and access to the relevant fields. The code was originally run on local UKB extracts but can be adapted for the Research Access Platform (RAP) with minor path adjustments.
 
 Assuming you have access to UK Biobank data and have placed the required files in `data/`:
 
@@ -110,16 +112,11 @@ source("mediation_analysis.R")
 ```
 Each script is modular and can be run independently if you only need specific outputs.
 
-## Data Access
-This project uses UK Biobank data, which cannot be shared publicly.
-To reproduce the analysis, you must have an approved UKB project and access to the relevant fields.
-The code was originally run on local UKB extracts but can be adapted for the Research Access Platform (RAP) with minor path adjustments.
-
 ## Citation
 If using this code please cite the published paper. Published paper also contains full methodological details, results, and interpretation.
-Maidstone R., et al. Increased risk of asthma in female night shift workers.
-ERJ Open Research, 2025.
-(Add DOI link here once available.)
+
+*Increased risk of asthma in female night shift workers.* Robert J. Maidstone, David W. Ray, Junxi Liu, Jack Bowden, Martin K. Rutter and Hannah J. Durrington - ERJ Open Research, 2025.
+([DOI: 10.1183/23120541.00137-2025](https://doi.org/10.1183/23120541.00137-2025))
 
 ## Contributing
 Contributions, suggestions, and extensions are welcome.
