@@ -67,7 +67,7 @@ Generates:
 - Generates Figure 1 (and Figure 2 in some versions).
 
 **📌 _Placeholder — insert example figure here_**  
-*(e.g., OR plot showing sex differences)*
+![*(e.g., OR plot showing sex differences)*](https://publications.ersnet.org/content/erjor/11/6/00137-2025/F1.large.jpg)
 
 ---
 
