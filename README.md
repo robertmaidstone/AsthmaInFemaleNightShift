@@ -55,8 +55,8 @@ Generates:
 - **Table 1:** Sociodemographic characteristics  
 - **Table 2:** Health characteristics  
 
-**📌 _Placeholder — insert example table screenshot here_**  
-*(e.g., Table 1 or Table 2 as PNG)*
+**Table 1: Social-demographic characteristics by current shift work exposure**  
+<img src="/examples/table1.png" alt="Table 1, from manuscript, top few rows. Social-demographic characteristics by current shift work exposure" width="500" height="500">
 
 ---
 
@@ -66,7 +66,7 @@ Generates:
 - Odds ratios and confidence intervals.
 - Generates Figure 1 (and Figure 2 in some versions).
 
-**Figure 1**  
+**Figure 1: Adjusted odds rations of asthma and asthma symptoms**  
 <img src="/examples/fig1.png" alt="Figure 1, from manuscript. Adjusted odds ratios (95% confidence intervals) of asthma and asthma symptoms by current shift work exposure, stratified by sex." width="500" height="500">
 
 ---
